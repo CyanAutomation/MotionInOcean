@@ -1,27 +1,26 @@
-version: '3.8'
-
 services:
   motioninocean:
     image: ghcr.io/CyanAutomation/MotionInOcean:latest
-    container_name: motioninocean
+    platform: linux/arm64
     restart: unless-stopped
+
     ports:
-      - "8000:8000"
-    devices:
-      # These device mappings are for camera access.
-      # The /dev/video* paths might change across reboots or different RPi models.
-      # /dev/dma_heap is essential for libcamera, used by picamera2 on modern Raspberry Pi OS.
-      - /dev/dma_heap
-      - /dev/vchiq
-      - /dev/video0
-      - /dev/video10
-      - /dev/video11
-      - /dev/video12
+      - "127.0.0.1:8000:8000"
+
+    env_file:
+      - .env
+
     volumes:
       - /run/udev:/run/udev:ro
-    environment:
-      - RESOLUTION=1280x720
-      - EDGE_DETECTION=false
+
+    privileged: true
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
     logging:
       driver: json-file
       options:
