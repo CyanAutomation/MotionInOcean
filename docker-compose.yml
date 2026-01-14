@@ -1,11 +1,17 @@
 version: '3.8'
 
 services:
-  camera:
-    image: ghcr.io/CyanAutomation/MotionInOcean:latest
+  motioninocean:
+    build: .
+    container_name: motioninocean
     volumes:
       - /run/udev:/run/udev:ro
     ports:
       - "8000:8000"
-    restart: always
-    privileged: true
+    restart: unless-stopped
+    devices:
+      - /dev/vchiq:/dev/vchiq
+      - /dev/video0:/dev/video0
+      - /dev/video10:/dev/video10
+      - /dev/video11:/dev/video11
+      - /dev/video12:/dev/video12

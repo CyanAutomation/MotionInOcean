@@ -142,7 +142,7 @@ MotionInOcean is designed so users can deploy without local builds.
 
 ### CI/CD expectations
 
-The repo is intended to include a GitHub Actions workflow that:
+The repo has future intent, to include a GitHub Actions workflow that:
 
 * builds the Docker image
 * pushes to GHCR

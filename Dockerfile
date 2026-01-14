@@ -1,32 +1,26 @@
 FROM debian:bookworm
 
-RUN apt update && apt install -y --no-install-recommends gnupg
-
-RUN echo "deb http://archive.raspberrypi.org/debian/ bookworm main" > /etc/apt/sources.list.d/raspi.list \
-  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
-
-RUN apt update && apt -y upgrade
-
-RUN apt update && apt install -y --no-install-recommends \
-         python3-pip \
-         python3-picamera2 \
-     && apt-get clean \
-     && apt-get autoremove \
-     && rm -rf /var/cache/apt/archives/* \
-     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gnupg curl ca-certificates && \
+    curl -Lfs https://archive.raspberrypi.org/debian/raspberrypi.gpg.key -o /tmp/raspberrypi.gpg.key && \
+    gpg --dearmor -o /usr/share/keyrings/raspberrypi.gpg /tmp/raspberrypi.gpg.key && \
+    echo "deb [signed-by=/usr/share/keyrings/raspberrypi.gpg] http://archive.raspberrypi.org/debian/ bookworm main" > /etc/apt/sources.list.d/raspi.list && \
+    rm /tmp/raspberrypi.gpg.key && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        python3-picamera2 \
+        python3-opencv \
+        python3-flask && \
+    apt-get clean && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------------------------------------------------------------
 # Build and run application
 # ------------------------------------------------------------------------------------------------
 # Set the working directory
 WORKDIR /app
-
-# Copy the requirements file
-COPY requirements.txt .
-
-# Install Python dependencies
-# TODO: fix issue with "--break-system-packages" flag
-RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
 
 # Copy the Python files
 COPY pi_camera_in_docker /app/pi_camera_in_docker
