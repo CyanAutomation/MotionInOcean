@@ -24,9 +24,10 @@ COPY --from=builder /etc/apt/sources.list.d/raspi.list /etc/apt/sources.list.d/r
 # Install runtime dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        python3-picamera2 \
         python3-opencv \
-        python3-flask && \
+        python3-flask \
+        python3-pip && \
+    pip3 install --break-system-packages picamera2 && \
     apt-get clean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
