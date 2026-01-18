@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Integration test verification document for MotionInOcean.
+Integration test verification document for motion-in-ocean.
 This validates the expected behavior and startup flow.
 """
 
@@ -23,8 +23,8 @@ def test_docker_compose_build():
             print("✓ docker-compose.yml is valid and can be processed")
             config = json.loads(result.stdout) if '{' in result.stdout else None
             if config:
-                print(f"✓ Service name: motioninocean")
-                print(f"✓ Image: {config.get('services', {}).get('motioninocean', {}).get('image', 'N/A')}")
+                print(f"✓ Service name: motion-in-ocean")
+                print(f"✓ Image: {config.get('services', {}).get('motion-in-ocean', {}).get('image', 'N/A')}")
             return True
         else:
             print(f"✗ docker-compose validation failed: {result.stderr}")
@@ -204,7 +204,7 @@ def test_device_security():
 
 def main():
     print("=" * 70)
-    print("MotionInOcean Integration Test & Verification")
+    print("motion-in-ocean Integration Test & Verification")
     print("=" * 70)
     
     tests = [

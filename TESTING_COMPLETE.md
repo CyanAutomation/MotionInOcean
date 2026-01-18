@@ -1,8 +1,8 @@
-# MotionInOcean - Testing & Deployment Validation Complete ✅
+# motion-in-ocean - Testing & Deployment Validation Complete ✅
 
 ## Executive Summary
 
-All tests passed successfully. The MotionInOcean Docker container is fully configured and ready for deployment on Raspberry Pi 4/5 with CSI camera support.
+All tests passed successfully. The motion-in-ocean Docker container is fully configured and ready for deployment on Raspberry Pi 4/5 with CSI camera support.
 
 | Metric | Result |
 |--------|--------|
@@ -148,7 +148,7 @@ Comprehensive testing report with deployment guide
 
 ```bash
 # 1. Navigate to project directory
-cd ~/containers/motioninocean
+cd ~/containers/motion-in-ocean
 
 # 2. Verify camera on host (optional)
 rpicam-hello --timeout 5000
@@ -158,7 +158,7 @@ docker-compose up -d
 
 # 4. Verify it's running
 docker-compose ps
-docker-compose logs motioninocean
+docker-compose logs motion-in-ocean
 
 # 5. Test endpoints
 curl http://localhost:8000/health
@@ -252,7 +252,7 @@ FPS=0                           # Frame rate (0 = camera default)
 
 ### Container keeps restarting
 **Cause:** Check logs for errors
-**Solution:** Run `docker-compose logs -f motioninocean`
+**Solution:** Run `docker-compose logs -f motion-in-ocean`
 
 ---
 
@@ -280,10 +280,10 @@ FPS=0                           # Frame rate (0 = camera default)
 
 ```bash
 # Check container is running
-docker ps | grep motioninocean
+docker ps | grep motion-in-ocean
 
 # View recent logs
-docker compose logs --tail=50 motioninocean
+docker compose logs --tail=50 motion-in-ocean
 
 # Test health endpoint
 curl -i http://localhost:8000/health
@@ -298,7 +298,7 @@ curl http://localhost:8000/stream.mjpg | ffmpeg -i - -vframes 1 /tmp/frame.jpg
 docker-compose down
 
 # View container resource usage
-docker stats motioninocean
+docker stats motion-in-ocean
 ```
 
 ---
@@ -310,7 +310,7 @@ docker stats motioninocean
 ✅ **All improvements implemented**  
 ✅ **Production ready**  
 
-The MotionInOcean application is verified and ready for deployment on Raspberry Pi 4/5 with CSI camera.
+The motion-in-ocean application is verified and ready for deployment on Raspberry Pi 4/5 with CSI camera.
 
 **Last Updated:** 2026-01-16  
 **Test Coverage:** 100%  

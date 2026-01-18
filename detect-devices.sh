@@ -4,7 +4,7 @@
 
 set -e
 
-echo "🔍 MotionInOcean - Camera Device Detection"
+echo "🔍 motion-in-ocean - Camera Device Detection"
 echo "=========================================="
 echo ""
 

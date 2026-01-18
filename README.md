@@ -1,8 +1,8 @@
-# MotionInOcean 🌊📷
+# motion-in-ocean 🌊📷
 
 **Raspberry Pi Camera Streaming in Docker (Picamera2 / libcamera)**
 
-MotionInOcean is a Docker-first project for running the **Raspberry Pi CSI camera** inside a container and streaming video across the network. It’s intended for **Raspberry Pi homelabs** and remote Docker hosts, where you want a reliable camera stream without installing a full stack directly on the host OS.
+motion-in-ocean is a Docker-first project for running the **Raspberry Pi CSI camera** inside a container and streaming video across the network. It’s intended for **Raspberry Pi homelabs** and remote Docker hosts, where you want a reliable camera stream without installing a full stack directly on the host OS.
 
 This repo is a fork of `hyzhak/pi-camera-in-docker`, with the goal of making the solution more polished and “homelab deployable”:
 
@@ -35,7 +35,7 @@ If you want motion detection / recording, use this project as a camera stream in
 
 ---
 
-## Why MotionInOcean exists
+## Why motion-in-ocean exists
 
 Running the Pi camera inside Docker is harder than USB webcams because the modern Raspberry Pi camera stack is built around **libcamera**, which relies on device discovery via udev and access to host hardware devices.
 
@@ -45,7 +45,7 @@ Many popular Docker camera images:
 * or assume a traditional V4L2 webcam interface
 * or require host-installed wrappers (e.g. `libcamerify`)
 
-MotionInOcean solves this by building a container that installs and runs Picamera2 directly on top of Bookworm-compatible Raspberry Pi repositories.
+motion-in-ocean solves this by building a container that installs and runs Picamera2 directly on top of Bookworm-compatible Raspberry Pi repositories.
 
 ---
 
@@ -104,7 +104,7 @@ raspistill --help        # Command not found on Bookworm
 
 ### Hardware access requirements
 
-MotionInOcean uses:
+motion-in-ocean uses:
 
 * `/run/udev:/run/udev:ro` mounted into the container
 * Explicit device mappings (e.g., `/dev/dma_heap`, `/dev/video*`, `/dev/vchiq`) are used for hardware/device access.
@@ -153,8 +153,8 @@ This allows you to verify the application's Flask server, API endpoints (`/healt
 ### Create project folder
 
 ```bash
-mkdir -p ~/containers/motioninocean
-cd ~/containers/motioninocean
+mkdir -p ~/containers/motion-in-ocean
+cd ~/containers/motion-in-ocean
 ```
 
 ### Configure environment variables
@@ -189,11 +189,11 @@ EOF
 
 ```yaml
 services:
-  motioninocean:
-    image: ghcr.io/<your-org-or-user>/motioninocean:latest
+  motion-in-ocean:
+    image: ghcr.io/<your-org-or-user>/motion-in-ocean:latest
     build: . # Build from local Dockerfile for custom configurations or local development
     platform: linux/arm64 # Specify target platform for Raspberry Pi
-    container_name: motioninocean
+    container_name: motion-in-ocean
     restart: unless-stopped
 
     ports:
@@ -253,14 +253,14 @@ Start it:
 
 ```bash
 docker compose up -d
-docker logs -f motioninocean
+docker logs -f motion-in-ocean
 ```
 
 ---
 
 ## Image publishing & releases (GHCR)
 
-MotionInOcean is designed so users can deploy without local builds.
+motion-in-ocean is designed so users can deploy without local builds.
 
 ### Release tags
 
@@ -419,7 +419,7 @@ Useful commands:
 ```bash
 docker compose ps
 docker compose logs -f
-docker exec -it motioninocean bash
+docker exec -it motion-in-ocean bash
 ls -l /dev/video*
 ls -l /dev/dma_heap
 ```

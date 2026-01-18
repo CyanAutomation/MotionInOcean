@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to validate MotionInOcean configuration and code structure.
+Test script to validate motion-in-ocean configuration and code structure.
 This tests the docker-compose configuration, Python code syntax, and endpoints.
 """
 
@@ -34,9 +34,9 @@ def test_docker_compose():
         
         # Verify essential keys
         assert 'services' in config, "Missing 'services' key"
-        assert 'motioninocean' in config['services'], "Missing 'motioninocean' service"
+        assert 'motion-in-ocean' in config['services'], "Missing 'motion-in-ocean' service"
         
-        service = config['services']['motioninocean']
+        service = config['services']['motion-in-ocean']
         
         # Check required fields (environment can be via env_file or environment key)
         required_fields = ['image', 'restart', 'ports', 'healthcheck']
@@ -240,7 +240,7 @@ def test_dockerfile():
 def main():
     """Run all tests."""
     print("=" * 60)
-    print("MotionInOcean Configuration & Code Tests")
+    print("motion-in-ocean Configuration & Code Tests")
     print("=" * 60)
     
     tests = [

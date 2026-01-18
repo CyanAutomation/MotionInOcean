@@ -1,4 +1,4 @@
-# MotionInOcean Testing Summary Report
+# motion-in-ocean Testing Summary Report
 
 ## Overview
 All tests passed successfully. The docker-compose configuration and Python application are ready for deployment on a Raspberry Pi with a CSI camera.
@@ -118,7 +118,7 @@ FPS=(optional, defaults to camera max)
 ```
 
 **Via docker-compose.yml:**
-- Image: ghcr.io/cyanautomation/motioninocean:latest
+- Image: ghcr.io/cyanautomation/motion-in-ocean:latest
 - Platform: linux/arm64
 - Restart: unless-stopped
 - Logging: json-file with rotation (10MB, 3 files)
@@ -254,7 +254,7 @@ Streaming client disconnected: ...
 
 4. **View logs:**
    ```bash
-   docker-compose logs -f motioninocean
+   docker-compose logs -f motion-in-ocean
    ```
 
 5. **Access stream:**
@@ -271,4 +271,4 @@ Streaming client disconnected: ...
 ✅ **Observability** - Health checks, readiness probes, and metrics
 ✅ **Reliability** - Safe shutdown, thread-safe streaming, proper lifecycle management
 
-The MotionInOcean application is ready for deployment on Raspberry Pi 4/5 with CSI camera.
+The motion-in-ocean application is ready for deployment on Raspberry Pi 4/5 with CSI camera.

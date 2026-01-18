@@ -215,7 +215,7 @@ def test_logging_configuration():
 
 def main():
     print("=" * 70)
-    print("MotionInOcean Unit Tests (No Camera Required)")
+    print("motion-in-ocean Unit Tests (No Camera Required)")
     print("=" * 70)
     
     tests = [
