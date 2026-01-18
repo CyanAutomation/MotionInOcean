@@ -33,7 +33,14 @@ check_device() {
 }
 
 # Core devices
-check_device "/dev/dma_heap" "Memory management for libcamera"
+if [ -d "/dev/dma_heap" ]; then
+    echo "  ✓ /dev/dma_heap - Memory management for libcamera (directory)"
+    ls -l /dev/dma_heap/ 2>/dev/null | grep -E '^[c|l]' | awk '{print "    " $0}'
+elif [ -e "/dev/dma_heap" ]; then
+    check_device "/dev/dma_heap" "Memory management for libcamera"
+else
+    echo "  ✗ /dev/dma_heap - Memory management for libcamera (NOT FOUND)"
+fi
 check_device "/dev/vchiq" "VideoCore Host Interface"
 
 echo ""
@@ -72,7 +79,7 @@ echo ""
 echo "📝 Alternative: Use device_cgroup_rules (automatically allows all matching devices):"
 echo ""
 echo "device_cgroup_rules:"
-echo "  - 'c 234:* rmw'  # /dev/dma_heap"
+echo "  - 'c 253:* rmw'  # /dev/dma_heap/* (char device 253)"
 echo "  - 'c 511:* rmw'  # /dev/vchiq"
 echo "  - 'c 81:* rmw'   # /dev/video*"
 echo ""
