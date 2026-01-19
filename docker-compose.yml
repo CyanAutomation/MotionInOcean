@@ -13,6 +13,10 @@ services:
       - "0.0.0.0:${MOTION_IN_OCEAN_PORT}:8000"  # Accessible from network (use firewall/VPN for production)
     environment:
       - TZ=${TZ}
+      - RESOLUTION=${MOTION_IN_OCEAN_RESOLUTION}
+      - FPS=${MOTION_IN_OCEAN_FPS}
+      - EDGE_DETECTION=${MOTION_IN_OCEAN_EDGE_DETECTION}
+      - JPEG_QUALITY=${MOTION_IN_OCEAN_JPEG_QUALITY}
     volumes:
       - /run/udev:/run/udev:ro
 
@@ -64,7 +68,7 @@ services:
     # privileged: true
 
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/ready >/dev/null || exit 1"]
       interval: 2m
       timeout: 5s
       retries: 3
