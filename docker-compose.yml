@@ -10,7 +10,7 @@ services:
     security_opt:
       - no-new-privileges:true
     ports:
-      - "127.0.0.1:${MOTION_IN_OCEAN_PORT}:8000"
+      - "0.0.0.0:${MOTION_IN_OCEAN_PORT}:8000"  # Accessible from network (use firewall/VPN for production)
     environment:
       - TZ=${TZ}
     volumes:
