@@ -1,0 +1,138 @@
+name: Bug report
+description: Report a bug or unexpected behaviour in motion-in-ocean
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug 🌊📷
+
+        motion-in-ocean runs the Raspberry Pi CSI camera stack (Picamera2/libcamera) inside Docker.
+        Most bugs are hardware/device-mapping specific, so logs + environment details are essential.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened and what did you expect to happen?
+      placeholder: "Expected stream to start, but container stays unhealthy and /ready returns 500..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Provide minimal steps to reproduce the issue.
+      placeholder: |
+        1. Raspberry Pi 4, Bookworm ARM64
+        2. docker compose up -d
+        3. curl /ready returns 500
+    validations:
+      required: true
+
+  - type: dropdown
+    id: on_hardware
+    attributes:
+      label: Where does this occur?
+      options:
+        - Raspberry Pi with CSI camera
+        - Non-Pi / mock camera mode (MOCK_CAMERA=true)
+        - Other / unknown
+    validations:
+      required: true
+
+  - type: input
+    id: pi_model
+    attributes:
+      label: Raspberry Pi model
+      description: e.g. Pi 4B (4GB), Pi 5, Pi 3A+
+      placeholder: "Pi 4B 4GB"
+    validations:
+      required: false
+
+  - type: input
+    id: os_version
+    attributes:
+      label: OS version
+      description: Output of `cat /etc/os-release` (or describe)
+      placeholder: "Raspberry Pi OS Bookworm 64-bit"
+    validations:
+      required: false
+
+  - type: input
+    id: camera_module
+    attributes:
+      label: Camera module
+      description: e.g. Camera Module v2/v3, HQ camera, Arducam etc.
+      placeholder: "Pi Camera Module v3"
+    validations:
+      required: false
+
+  - type: textarea
+    id: compose
+    attributes:
+      label: docker-compose.yml snippet
+      description: Please include only the relevant service config (ports, devices, volumes, env).
+      render: yaml
+      placeholder: |
+        services:
+          motion-in-ocean:
+            image: ghcr.io/<user>/motion-in-ocean:latest
+            ports:
+              - "127.0.0.1:8000:8000"
+            devices:
+              - /dev/vchiq:/dev/vchiq
+              - /dev/dma_heap:/dev/dma_heap
+            volumes:
+              - /run/udev:/run/udev:ro
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: .env content (redact secrets)
+      description: Include your config values (RESOLUTION/FPS/EDGE_DETECTION/TZ/MOCK_CAMERA).
+      render: bash
+      placeholder: |
+        RESOLUTION=640x480
+        FPS=30
+        EDGE_DETECTION=false
+        TZ=Europe/London
+        MOCK_CAMERA=false
+    validations:
+      required: false
+
+  - type: textarea
+    id: endpoints
+    attributes:
+      label: Endpoint outputs
+      description: Paste output for health endpoints.
+      render: bash
+      placeholder: |
+        curl -i http://localhost:8000/health
+        curl -i http://localhost:8000/ready
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Container logs
+      description: Paste the last ~200 lines.
+      render: bash
+      placeholder: |
+        docker logs motion-in-ocean --tail 200
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Anything else that may help (network setup, reverse proxy, uptime monitor, etc.)
+      placeholder: "Running behind Caddy reverse proxy; using Pi 5 + Camera Module 3..."
+    validations:
+      required: false
