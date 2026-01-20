@@ -37,7 +37,7 @@ nano .env
 ```yaml
 services:
   motion-in-ocean:
-    image: ghcr.io/<your-org-or-user>/motion-in-ocean:latest
+    image: ghcr.io/cyanautomation/motioninocean:latest
     container_name: motion-in-ocean
     restart: unless-stopped
 

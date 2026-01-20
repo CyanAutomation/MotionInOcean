@@ -79,4 +79,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remote logging integration
 - Camera hotplug support
 
-[1.0.0]: https://github.com/hyzhak/pi-camera-in-docker/releases/tag/v1.0.0
+[1.0.0]: https://github.com/cyanautomation/motioninocean/releases/tag/v1.0.0
