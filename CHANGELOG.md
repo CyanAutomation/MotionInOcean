@@ -65,6 +65,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-01-20
+
+- Implement automated release process with GitHub Actions workflow and rollback functionality
+
 ## [0.6.4] - 2026-01-20
 
 - Remove test_metrics_endpoint.py as it is no longer needed
