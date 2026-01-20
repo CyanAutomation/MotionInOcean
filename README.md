@@ -279,8 +279,6 @@ If you’d like to contribute:
 2. Create a feature branch
 3. Open a PR
 
-> A `[CONTRIBUTING.md](/CONTRIBUTING.md)` + Issue templates are planned as next steps.
-
 ---
 
 ## Roadmap
@@ -334,7 +332,7 @@ This repo is a fork of `hyzhak/pi-camera-in-docker`, with a focus on making the 
 
 ## Links
 
-* License section: [LICENSE](LICENCE.md)
+* License section: [LICENSE](LICENSE.md)
 * Contributing section: [CONTRIBUTING](CONTRIBUTING.md)
 * Security section: [SECURITY](SECURITY.md)
 * Code of Conduct: [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md)
