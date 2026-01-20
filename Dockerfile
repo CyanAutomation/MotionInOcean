@@ -33,7 +33,7 @@ RUN apt-get update && \
         libcap-dev \
         libcamera-dev \
         python3-libcamera && \
-    pip3 install --break-system-packages picamera2 && \
+    pip3 install --break-system-packages picamera2 flask-cors && \
     apt-get clean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*

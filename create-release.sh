@@ -55,39 +55,52 @@ echo ""
 
 # Check for uncommitted changes
 if ! git diff-index --quiet HEAD --; then
-    echo -e "${YELLOW}⚠️  You have uncommitted changes.${NC}"
+    echo -e "${RED}❌ You have uncommitted changes.${NC}"
     echo "Please commit or stash them before creating a release."
     echo ""
     git status --short
     echo ""
-    echo -e "${YELLOW}Do you want to continue anyway? (y/N):${NC}"
-    read -r CONTINUE
-    if [[ ! "${CONTINUE}" =~ ^[Yy]$ ]]; then
-        echo "Release cancelled."
-        exit 0
-    fi
+    exit 1
 fi
 
 # Update VERSION file
 echo "${NEW_VERSION}" > "${VERSION_FILE}"
 echo -e "${GREEN}✓${NC} Updated ${VERSION_FILE}"
 
-# Update CHANGELOG (add placeholder for manual editing)
+# Update CHANGELOG
 TODAY=$(date +%Y-%m-%d)
 CHANGELOG_ENTRY="## [${NEW_VERSION}] - ${TODAY}"
 
+# Get the latest tag. If no tags, use the first commit
+LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` --abbrev=0 2>/dev/null)
+
+if [ -z "$LATEST_TAG" ]; then
+    echo -e "${YELLOW}⚠️  No tags found. Generating changelog from all commits.${NC}"
+    # Get all commits if no tags are found
+    COMMIT_LOG=$(git log --pretty=format:"- %s")
+else
+    echo -e "Generating changelog from commits since ${GREEN}${LATEST_TAG}${NC}"
+    COMMIT_LOG=$(git log --pretty=format:"- %s" "${LATEST_TAG}"..HEAD)
+fi
+
+if [ -z "$COMMIT_LOG" ]; then
+    COMMIT_LOG="- No changes to log."
+fi
+
 if grep -q "## \[Unreleased\]" "${CHANGELOG_FILE}"; then
-    # Add new version entry after [Unreleased] section
-    sed -i "/## \[Unreleased\]/a\\
-\\
-${CHANGELOG_ENTRY}\\
-\\
-### Changed\\
-- Release version ${NEW_VERSION}\\
-" "${CHANGELOG_FILE}"
+    # Create a temp file with the changelog entry to avoid issues with special characters in sed
+    CHANGELOG_BODY=$(mktemp)
+    # The empty line before the entry is important for markdown formatting
+    echo -e "\n${CHANGELOG_ENTRY}\n" >> "${CHANGELOG_BODY}"
+    echo -e "${COMMIT_LOG}" >> "${CHANGELOG_BODY}"
+
+    # Use sed to insert the content of the temp file after the '[Unreleased]' line
+    sed -i -e "/## \[Unreleased\]/r ${CHANGELOG_BODY}" "${CHANGELOG_FILE}"
+
+    rm "${CHANGELOG_BODY}"
     echo -e "${GREEN}✓${NC} Updated ${CHANGELOG_FILE}"
 else
-    echo -e "${YELLOW}⚠️  Could not auto-update CHANGELOG. Please update manually.${NC}"
+    echo -e "${YELLOW}⚠️  Could not find '## [Unreleased]' in CHANGELOG.md. Please update manually.${NC}"
 fi
 
 echo ""
