@@ -40,6 +40,8 @@ services:
     devices:
       - /dev/dma_heap:/dev/dma_heap  # Mount entire directory
       - /dev/vchiq:/dev/vchiq
+      # DRM/KMS device (optional, for pykms support if available)
+      - /dev/dri:/dev/dri
       # Media controller devices (required for libcamera camera enumeration)
       - /dev/media0:/dev/media0
       - /dev/media1:/dev/media1

@@ -13,17 +13,46 @@ from flask import Flask, Response, render_template, jsonify
 from flask_cors import CORS
 from datetime import datetime
 
-from picamera2 import Picamera2
-from picamera2.encoders import JpegEncoder
-from picamera2.outputs import FileOutput
-from picamera2.array import MappedArray
-
-# Configure structured logging
+# Configure structured logging early
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Workaround for pykms import error in headless container environments
+# picamera2 imports DrmPreview which requires pykms, but we don't use preview functionality
+try:
+    from picamera2 import Picamera2
+except ModuleNotFoundError as e:
+    if 'pykms' in str(e) or 'kms' in str(e):
+        # Mock the pykms module so picamera2 can import without DRM/KMS support
+        import sys
+        import types
+        
+        # Create mock modules
+        pykms_mock = types.ModuleType('pykms')
+        kms_mock = types.ModuleType('kms')
+        
+        # Add to sys.modules to satisfy imports
+        sys.modules['pykms'] = pykms_mock
+        sys.modules['kms'] = kms_mock
+        
+        logger.warning(
+            "pykms module not available - using mock module. "
+            "DrmPreview functionality disabled (not needed for headless streaming)."
+        )
+        
+        # Retry import with mocked modules
+        from picamera2 import Picamera2
+    else:
+        raise
+else:
+    # Import succeeded on first try
+    pass
+from picamera2.encoders import JpegEncoder
+from picamera2.outputs import FileOutput
+from picamera2.array import MappedArray
 
 # Get configuration from environment variables
 resolution_str = os.environ.get("RESOLUTION", "640x480")

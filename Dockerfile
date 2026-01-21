@@ -33,6 +33,10 @@ RUN apt-get update && \
         libcap-dev \
         libcamera-dev \
         python3-libcamera && \
+    # Try to install pykms package (may not be available on all Pi OS versions)
+    (apt-get install -y --no-install-recommends python3-kms || \
+     apt-get install -y --no-install-recommends python3-pykms || \
+     echo "Warning: python3-kms/python3-pykms not available, will use fallback") && \
     pip3 install --break-system-packages picamera2 flask-cors && \
     apt-get clean && \
     apt-get autoremove -y && \
