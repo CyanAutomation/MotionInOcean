@@ -84,6 +84,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-01-21
+
+- Update Dockerfile and requirements.txt to include python3-picamera2 and adjust comments
+- Merge pull request #4 from CyanAutomation/dependabot/github_actions/github/codeql-action-4
+- Merge pull request #6 from CyanAutomation/dependabot/github_actions/actions/checkout-6
+- Merge pull request #5 from CyanAutomation/dependabot/pip/coverage-7.10.7
+- Merge pull request #8 from CyanAutomation/dependabot/pip/mypy-1.19.1
+- Merge pull request #7 from CyanAutomation/dependabot/github_actions/codecov/codecov-action-5
+- Merge pull request #9 from CyanAutomation/dependabot/pip/bandit-1.8.6
+- Merge pull request #10 from CyanAutomation/dependabot/pip/picamera2-0.3.33
+- Merge pull request #11 from CyanAutomation/dependabot/pip/pytest-cov-7.0.0
+- chore(deps-dev): bump pytest-cov from 6.0.0 to 7.0.0
+- chore(deps): bump picamera2 from 0.3.18 to 0.3.33
+- chore(deps-dev): bump bandit from 1.7.10 to 1.8.6
+- chore(deps-dev): bump mypy from 1.13.0 to 1.19.1
+- chore(deps): bump codecov/codecov-action from 4 to 5
+- chore(deps): bump actions/checkout from 4 to 6
+- chore(deps-dev): bump coverage from 7.6.9 to 7.10.7
+- chore(deps): bump github/codeql-action from 3 to 4
+
 ## [1.0.3] - 2026-01-21
 
 - feat: update changelog for version 1.0.2 with pykms enhancements and fixes fix: improve pykms import handling in main.py for better error management test: enhance test script to cover both ModuleNotFoundError and AttributeError scenarios for pykms
