@@ -1,0 +1,23 @@
+# Core dependencies for pi-camera-in-docker
+# These should be installed via pip in the Docker container
+
+# Web framework
+Flask==3.0.3
+
+# CORS support for Flask
+flask-cors==5.0.0
+
+# Camera support for Raspberry Pi
+# Note: picamera2 requires system packages (python3-libcamera, libcamera-dev)
+# which are installed via apt in the Dockerfile
+picamera2==0.3.19
+
+# Development and testing dependencies
+# These are listed here for reference but installed separately in CI/dev environments
+# pytest==8.3.4
+# pytest-cov==6.0.0
+# coverage==7.6.9
+# ruff==0.8.4
+# pre-commit==4.0.1
+# mypy==1.13.0
+# types-Flask==1.1.6

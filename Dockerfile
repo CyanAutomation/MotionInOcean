@@ -37,13 +37,18 @@ RUN apt-get update && \
     (apt-get install -y --no-install-recommends python3-kms || \
      apt-get install -y --no-install-recommends python3-pykms || \
      echo "Warning: python3-kms/python3-pykms not available, will use fallback") && \
-    pip3 install --break-system-packages picamera2 flask-cors && \
     apt-get clean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
+
+# Copy requirements first for better layer caching
+COPY requirements.txt /app/
+
+# Install Python dependencies with pinned versions
+RUN pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 
 # Copy the application code
 COPY pi_camera_in_docker /app

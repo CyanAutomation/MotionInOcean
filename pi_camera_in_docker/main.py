@@ -8,7 +8,8 @@ import json
 import time
 import numpy as np
 from collections import deque
-from threading import Condition, Event
+from threading import Condition, Event, Thread
+from typing import Iterator, Dict, Any, Optional, Tuple
 from flask import Flask, Response, render_template, jsonify
 from flask_cors import CORS
 from datetime import datetime
@@ -55,18 +56,18 @@ from picamera2.outputs import FileOutput
 from picamera2.array import MappedArray
 
 # Get configuration from environment variables
-resolution_str = os.environ.get("RESOLUTION", "640x480")
-edge_detection_str = os.environ.get("EDGE_DETECTION", "false")
-fps_str = os.environ.get("FPS", "0")  # 0 = use camera default
-mock_camera_str = os.environ.get("MOCK_CAMERA", "false")
-jpeg_quality_str = os.environ.get("JPEG_QUALITY", "100")
+resolution_str: str = os.environ.get("RESOLUTION", "640x480")
+edge_detection_str: str = os.environ.get("EDGE_DETECTION", "false")
+fps_str: str = os.environ.get("FPS", "0")  # 0 = use camera default
+mock_camera_str: str = os.environ.get("MOCK_CAMERA", "false")
+jpeg_quality_str: str = os.environ.get("JPEG_QUALITY", "100")
 
-mock_camera = mock_camera_str.lower() in ('true', '1', 't')
+mock_camera: bool = mock_camera_str.lower() in ('true', '1', 't')
 logger.info(f"Mock camera enabled: {mock_camera}")
 
 # Parse resolution
 try:
-    resolution = tuple(map(int, resolution_str.split('x')))
+    resolution: Tuple[int, int] = tuple(map(int, resolution_str.split('x')))  # type: ignore[assignment]
     # Validate resolution dimensions
     if len(resolution) != 2 or resolution[0] <= 0 or resolution[1] <= 0:
         logger.warning(f"Invalid RESOLUTION dimensions {resolution}. Using default 640x480.")
@@ -81,12 +82,12 @@ except (ValueError, TypeError):
     resolution = (640, 480)
 
 # Parse edge detection flag
-edge_detection = edge_detection_str.lower() in ('true', '1', 't')
+edge_detection: bool = edge_detection_str.lower() in ('true', '1', 't')
 logger.info(f"Edge detection: {edge_detection}")
 
 # Parse FPS
 try:
-    fps = int(fps_str)
+    fps: int = int(fps_str)
     # Validate FPS value
     if fps < 0:
         logger.warning(f"FPS cannot be negative ({fps}). Using camera default.")
@@ -102,7 +103,7 @@ except (ValueError, TypeError):
 
 # Parse JPEG quality
 try:
-    jpeg_quality = int(jpeg_quality_str)
+    jpeg_quality: int = int(jpeg_quality_str)
     # Validate JPEG quality value
     if jpeg_quality < 1 or jpeg_quality > 100:
         logger.warning(f"JPEG_QUALITY {jpeg_quality} out of range (1-100). Using default 100.")
@@ -113,7 +114,12 @@ except (ValueError, TypeError):
     logger.warning("Invalid JPEG_QUALITY format. Using default 100.")
     jpeg_quality = 100
 
-def apply_edge_detection(request):
+def apply_edge_detection(request: Any) -> None:
+    """Apply edge detection filter to camera frame.
+    
+    Args:
+        request: Camera frame request from picamera2
+    """
     try:
         with MappedArray(request, "main") as m:
             # Convert to grayscale
@@ -128,14 +134,21 @@ def apply_edge_detection(request):
         logger.error(f"Edge detection processing failed: {e}", exc_info=True)
 
 class StreamingOutput(io.BufferedIOBase):
-    def __init__(self):
-        self.frame = None
-        self.condition = Condition()
-        self.frame_count = 0
-        self.last_frame_time = time.time()
-        self.frame_times = deque(maxlen=30)  # Fixed-size deque prevents memory leak
+    """Thread-safe output handler for camera frames."""
+    
+    def __init__(self) -> None:
+        self.frame: Optional[bytes] = None
+        self.condition: Condition = Condition()
+        self.frame_count: int = 0
+        self.last_frame_time: float = time.time()
+        self.frame_times: deque[float] = deque(maxlen=30)  # Fixed-size deque prevents memory leak
 
-    def write(self, buf):
+    def write(self, buf: bytes) -> None:
+        """Write a new frame to the output buffer.
+        
+        Args:
+            buf: JPEG-encoded frame data
+        """
         with self.condition:
             self.frame = buf
             self.frame_count += 1
@@ -144,8 +157,12 @@ class StreamingOutput(io.BufferedIOBase):
             self.frame_times.append(now)  # deque automatically maintains maxlen=30
             self.condition.notify_all()
 
-    def get_fps(self):
-        """Calculate actual FPS from frame times"""
+    def get_fps(self) -> float:
+        """Calculate actual FPS from frame times.
+        
+        Returns:
+            Current frames per second, or 0.0 if insufficient data
+        """
         if len(self.frame_times) < 2:
             return 0.0
         time_span = self.frame_times[-1] - self.frame_times[0]
@@ -153,8 +170,12 @@ class StreamingOutput(io.BufferedIOBase):
             return 0.0
         return (len(self.frame_times) - 1) / time_span
 
-    def get_status(self):
-        """Return current streaming status"""
+    def get_status(self) -> Dict[str, Any]:
+        """Return current streaming status.
+        
+        Returns:
+            Dictionary containing streaming statistics
+        """
         return {
             "frames_captured": self.frame_count,
             "current_fps": round(self.get_fps(), 2),
@@ -173,21 +194,22 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 output = StreamingOutput()
 app.start_time = datetime.now()
-picam2_instance = None
+picam2_instance: Optional[Any] = None  # Picamera2 instance (Optional since it may not be available)
 recording_started = Event()  # Thread-safe flag to track if camera recording has started
 
 @app.route('/')
-def index():
+def index() -> str:
+    """Render main camera streaming page."""
     return render_template("index.html", width=resolution[0], height=resolution[1])
 
 @app.route('/health')
-def health():
-    """Health check endpoint - returns 200 if service is running"""
+def health() -> Tuple[Response, int]:
+    """Health check endpoint - returns 200 if service is running."""
     return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()}), 200
 
 @app.route('/ready')
-def ready():
-    """Readiness probe - checks if camera is actually streaming"""
+def ready() -> Tuple[Response, int]:
+    """Readiness probe - checks if camera is actually streaming."""
     if not recording_started.is_set():
         return jsonify({
             "status": "not_ready",
@@ -203,8 +225,8 @@ def ready():
     }), 200
 
 @app.route('/metrics')
-def metrics():
-    """Metrics endpoint - returns camera metrics in JSON format for monitoring"""
+def metrics() -> Tuple[Response, int]:
+    """Metrics endpoint - returns camera metrics in JSON format for monitoring."""
     uptime = (datetime.now() - app.start_time).total_seconds()
     status = output.get_status()
     
@@ -218,7 +240,12 @@ def metrics():
         "timestamp": datetime.now().isoformat()
     }), 200
 
-def gen():
+def gen() -> Iterator[bytes]:
+    """Generate MJPEG stream frames.
+    
+    Yields:
+        MJPEG frame data with multipart boundaries
+    """
     try:
         while True:
             with output.condition:
@@ -233,7 +260,8 @@ def gen():
         logger.warning(f'Streaming client disconnected: {e}')
 
 @app.route('/stream.mjpg')
-def video_feed():
+def video_feed() -> Response:
+    """Stream MJPEG video feed."""
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
@@ -246,7 +274,8 @@ if __name__ == '__main__':
         dummy_image_jpeg = cv2.imencode('.jpg', dummy_image)[1].tobytes()
 
         # Simulate camera streaming for the StreamingOutput
-        def generate_mock_frames():
+        def generate_mock_frames() -> None:
+            """Generate mock camera frames for testing."""
             # Mark as started for mock mode using thread-safe Event
             recording_started.set()
             while True:
@@ -254,7 +283,7 @@ if __name__ == '__main__':
                 output.write(dummy_image_jpeg)
         
         import threading
-        mock_thread = threading.Thread(target=generate_mock_frames)
+        mock_thread: Thread = threading.Thread(target=generate_mock_frames)
         mock_thread.daemon = True
         mock_thread.start()
 
