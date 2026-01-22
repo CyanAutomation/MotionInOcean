@@ -81,7 +81,7 @@ COPY healthcheck.py /app/healthcheck.py
 RUN chmod +x /app/healthcheck.py
 
 # Validate required Python modules are present in the final image
-RUN python3 -c "import flask; import flask_cors"
+RUN python3 -c "import sys; import flask; import flask_cors; print('All required modules imported successfully')"
 
 # Set the entry point
 CMD ["python3", "/app/main.py"]
