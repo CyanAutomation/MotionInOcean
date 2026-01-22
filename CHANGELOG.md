@@ -84,6 +84,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-01-22
+
+- Enhance Docker setup with healthcheck script and optimize dependencies
+
 ## [1.0.4] - 2026-01-21
 
 - Update Dockerfile and requirements.txt to include python3-picamera2 and adjust comments
