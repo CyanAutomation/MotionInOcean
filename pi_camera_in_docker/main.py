@@ -132,8 +132,10 @@ else:
 logger.info(f"Edge detection: {edge_detection}")
 
 # Parse max frame age for readiness
+# Parse max frame age for readiness
+max_frame_age_seconds: float = 10.0  # Initialize with default value
 try:
-    max_frame_age_seconds: float = float(max_frame_age_seconds_str)
+    max_frame_age_seconds = float(max_frame_age_seconds_str)
     if max_frame_age_seconds <= 0:
         logger.warning(
             f"MAX_FRAME_AGE_SECONDS must be positive ({max_frame_age_seconds}). Using default 10."
