@@ -406,6 +406,7 @@ class CameraStreamApp {
             const statusText = notReadyPayload?.reason || notReadyPayload?.message || 'Starting...';
             this.setConnectionStatus('connecting', statusText);
             this.statsInFlight = false;
+            return;
           }
         }
         throw new Error(`HTTP error! status: ${response.status}`);
