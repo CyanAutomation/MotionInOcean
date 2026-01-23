@@ -347,8 +347,7 @@ class CameraStreamApp {
   async updateStats() {
     if (this.statsInFlight) return;
     
-    try {
-      this.statsInFlight = true;
+    this.statsInFlight = true;
 
     const timeoutMs = 5000;
     let timeoutId;
@@ -383,10 +382,9 @@ class CameraStreamApp {
           }
 
           if (notReadyPayload?.status === 'not_ready') {
-            this.setConnectionStatus('connecting', 'Starting...');
-            this.statsInFlight = false;
+            const statusText = notReadyPayload?.message || 'Starting...';
+            this.setConnectionStatus('connecting', statusText);
             return;
-          }
           }
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -445,7 +443,6 @@ class CameraStreamApp {
         this.elements.lastUpdated.textContent = 
           `Updated: ${now.toLocaleTimeString()}`;
       }
-      
     } catch (error) {
       console.error('Failed to fetch stats:', error);
       this.setConnectionStatus('disconnected', 'Disconnected');
