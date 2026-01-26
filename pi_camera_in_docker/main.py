@@ -327,6 +327,7 @@ def handle_shutdown(signum: int, frame: Optional[object]) -> None:
     logger.info(f"Received signal {signum}; shutting down.")
     recording_started.clear()
     shutdown_event.set()
+    global picam2_instance
     if picam2_instance is not None:
         try:
             if picam2_instance.started:
