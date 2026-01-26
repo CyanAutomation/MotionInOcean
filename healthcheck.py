@@ -37,7 +37,8 @@ def _is_public_address(address):
         ip = ipaddress.ip_address(address)
     except ValueError:
         return False
-    return ip.is_global
+    # Check if address is global and not in private ranges
+    return ip.is_global and not ip.is_private and not ip.is_loopback and not ip.is_link_local
 
 
 def _resolve_hostnames(hostname):
