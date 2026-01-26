@@ -82,12 +82,6 @@ def check_health():
     """Check if the application is healthy."""
     env_healthcheck_url = os.getenv("HEALTHCHECK_URL")
     healthcheck_url = env_healthcheck_url or DEFAULT_HEALTHCHECK_URL
-    if env_healthcheck_url and not _is_allowed_url(env_healthcheck_url):
-        print(
-            f"Warning: Invalid HEALTHCHECK_URL '{env_healthcheck_url}', using default",
-            file=sys.stderr,
-        )
-        healthcheck_url = DEFAULT_HEALTHCHECK_URL
     timeout_value = os.getenv("HEALTHCHECK_TIMEOUT")
     if not timeout_value:
         timeout_seconds = DEFAULT_HEALTHCHECK_TIMEOUT
