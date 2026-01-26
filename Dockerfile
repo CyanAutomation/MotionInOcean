@@ -1,7 +1,7 @@
 # ---- Builder Stage ----
 # This stage is responsible for adding the Raspberry Pi repository and building Python packages.
 # Using python:3.14-slim-bookworm provides optimized Python with pip pre-installed
-FROM python:3.14-slim-bookworm AS builder
+FROM python:3.12-slim-bookworm AS builder
 
 # Build argument to control opencv-python-headless installation
 # Set to "true" to include edge detection support (~40MB larger image)
