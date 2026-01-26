@@ -65,7 +65,7 @@ def _is_allowed_url(url):
         literal_address = None
 
     if literal_address:
-        return _is_public_address(hostname)
+        return _is_public_address(str(literal_address))
 
     # Validate hostname format without DNS resolution to prevent TOCTOU attacks
     if not all(c.isalnum() or c in ".-" for c in hostname):
