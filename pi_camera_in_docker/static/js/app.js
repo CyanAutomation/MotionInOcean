@@ -368,7 +368,7 @@ class CameraStreamApp {
   }
   
   /**
-   * Fetch and update stats from /ready endpoint
+   * Fetch and update stats from /metrics endpoint
    */
   async updateStats() {
     if (this.statsInFlight) return;
@@ -395,28 +395,11 @@ class CameraStreamApp {
     }
 
     try {
-      const response = await fetch('/ready', {
+      const response = await fetch('/metrics', {
         signal
       });
 
       if (!response.ok) {
-        if (response.status === 503) {
-          let notReadyPayload = null;
-          try {
-            notReadyPayload = await response.json();
-          } catch (parseError) {
-            console.warn('Failed to parse /ready 503 response:', parseError);
-          }
-
-          if (notReadyPayload?.status === 'not_ready') {
-            const statusText = notReadyPayload?.reason || notReadyPayload?.message || 'Starting...';
-            this.setConnectionStatus('connecting', statusText);
-            this.pollingPausedForRetry = false;
-            this.startStatsUpdate();
-            this.statsInFlight = false;
-            return;
-          }
-        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
