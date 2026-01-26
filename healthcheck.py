@@ -19,17 +19,6 @@ DEFAULT_HEALTHCHECK_URL = "http://127.0.0.1:8000/health"
 DEFAULT_HEALTHCHECK_TIMEOUT = 5
 
 
-def _load_timeout():
-    """Load the healthcheck timeout value."""
-    timeout_value = os.getenv("HEALTHCHECK_TIMEOUT")
-    if not timeout_value:
-        return DEFAULT_HEALTHCHECK_TIMEOUT
-    try:
-        return float(timeout_value)
-    except ValueError:
-        return DEFAULT_HEALTHCHECK_TIMEOUT
-
-
 def check_health():
     """Check if the application is healthy."""
     healthcheck_url = os.getenv("HEALTHCHECK_URL", DEFAULT_HEALTHCHECK_URL)
@@ -45,7 +34,14 @@ def check_health():
         ))):
         print(f"Warning: Invalid HEALTHCHECK_URL '{healthcheck_url}', using default", file=sys.stderr)
         healthcheck_url = DEFAULT_HEALTHCHECK_URL
-    timeout_seconds = _load_timeout()
+    timeout_value = os.getenv("HEALTHCHECK_TIMEOUT")
+    if not timeout_value:
+        timeout_seconds = DEFAULT_HEALTHCHECK_TIMEOUT
+    else:
+        try:
+            timeout_seconds = float(timeout_value)
+        except ValueError:
+            timeout_seconds = DEFAULT_HEALTHCHECK_TIMEOUT
     try:
         with urllib.request.urlopen(healthcheck_url, timeout=timeout_seconds) as response:
             if response.status == 200:
