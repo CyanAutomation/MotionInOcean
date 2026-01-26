@@ -32,6 +32,10 @@ def _load_timeout():
 def check_health():
     """Check if the application is healthy."""
     healthcheck_url = os.getenv("HEALTHCHECK_URL", DEFAULT_HEALTHCHECK_URL)
+    # Validate URL to prevent SSRF attacks
+    if not (healthcheck_url.startswith("") or healthcheck_url.startswith("")):
+        print(f"Warning: Invalid HEALTHCHECK_URL '{healthcheck_url}', using default", file=sys.stderr)
+        healthcheck_url = DEFAULT_HEALTHCHECK_URL
     timeout_seconds = _load_timeout()
     try:
         with urllib.request.urlopen(healthcheck_url, timeout=timeout_seconds) as response:
