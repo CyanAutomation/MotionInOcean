@@ -58,7 +58,7 @@ def check_health():
             or normalized_hostname
             in {"localhost", "127.0.0.1", "0.0.0.0", "::1", "metadata.google.internal", "169.254.169.254"}
             in {"localhost", "127.0.0.1", "0.0.0.0", "::1", "metadata.google.internal", "169.254.169.254"}
-            or (literal_address and not _is_public_address(str(literal_address)))
+            or (literal_address and (literal_address == "invalid" or not _is_public_address(str(literal_address))))
         ):
             print(
                 f"Warning: Invalid HEALTHCHECK_URL '{env_healthcheck_url}', using default",
