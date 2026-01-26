@@ -91,7 +91,14 @@ def check_health():
             file=sys.stderr,
         )
         healthcheck_url = DEFAULT_HEALTHCHECK_URL
-    timeout_seconds = _load_timeout()
+    timeout_value = os.getenv("HEALTHCHECK_TIMEOUT")
+    if not timeout_value:
+        timeout_seconds = DEFAULT_HEALTHCHECK_TIMEOUT
+    else:
+        try:
+            timeout_seconds = float(timeout_value)
+        except ValueError:
+            timeout_seconds = DEFAULT_HEALTHCHECK_TIMEOUT
     try:
         with urllib.request.urlopen(healthcheck_url, timeout=timeout_seconds) as response:
             if response.status == 200:
