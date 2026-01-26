@@ -338,7 +338,7 @@ def ready() -> Tuple[Response, int]:
             }
         ), 503
 
-    last_frame_age_seconds = status["last_frame_age_seconds"]
+    last_frame_age_seconds = base_payload["last_frame_age_seconds"]
     if last_frame_age_seconds is None:
         return jsonify(
             {
