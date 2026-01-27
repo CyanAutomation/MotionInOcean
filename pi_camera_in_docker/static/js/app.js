@@ -9,6 +9,7 @@ const state = {
   connectionTimeout: null,
   isConnected: false,
   statsCollapsed: false,
+  statsInFlight: false,
   elements: {
     videoStream: null,
     statsPanel: null,
