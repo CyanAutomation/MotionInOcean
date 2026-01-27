@@ -342,46 +342,41 @@ def ready() -> Tuple[Response, int]:
     """Readiness probe - checks if camera is actually streaming."""
     status = get_stream_status(stream_stats)
     now = datetime.now()
+    is_recording = recording_started.is_set()
     base_payload = {
         "timestamp": now.isoformat(),
         "uptime_seconds": (now - app.start_time).total_seconds(),
         "max_frame_age_seconds": max_frame_age_seconds,
         **status,
     }
-    if not recording_started.is_set():
-        return jsonify(
-            {
-                **base_payload,
-                "status": "not_ready",
-                "reason": "Camera not initialized or recording not started",
-            }
-        ), 503
-
     last_frame_age_seconds = base_payload["last_frame_age_seconds"]
-    if last_frame_age_seconds is None:
-        return jsonify(
-            {
-                **base_payload,
-                "status": "not_ready",
-                "reason": "No frames captured yet",
-            }
-        ), 503
+    is_stale = (
+        last_frame_age_seconds is not None
+        and last_frame_age_seconds > max_frame_age_seconds
+    )
+    is_ready = is_recording and last_frame_age_seconds is not None and not is_stale
+    if is_ready:
+        readiness_status = "ready"
+        reason = None
+        status_code = 200
+    else:
+        readiness_status = "not_ready"
+        if not is_recording:
+            reason = "Camera not initialized or recording not started"
+        elif last_frame_age_seconds is None:
+            reason = "No frames captured yet"
+        else:
+            reason = "stale_stream"
+        status_code = 503
 
-    if last_frame_age_seconds > max_frame_age_seconds:
-        return jsonify(
-            {
-                **base_payload,
-                "status": "not_ready",
-                "reason": "stale_stream",
-            }
-        ), 503
+    payload = {
+        **base_payload,
+        "status": readiness_status,
+    }
+    if reason is not None:
+        payload["reason"] = reason
 
-    return jsonify(
-        {
-            **base_payload,
-            "status": "ready",
-        }
-    ), 200
+    return jsonify(payload), status_code
 
 
 @app.route("/metrics")
