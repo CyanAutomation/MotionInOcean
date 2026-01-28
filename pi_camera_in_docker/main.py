@@ -347,7 +347,7 @@ class FrameBuffer(io.BufferedIOBase):
             ValueError: If frame size exceeds maximum allowed size
         """
         frame_size = len(buf)
-        
+
         # Validate frame size to prevent memory exhaustion
         if self._max_frame_size is not None and frame_size > self._max_frame_size:
             self._dropped_frames += 1
@@ -357,14 +357,14 @@ class FrameBuffer(io.BufferedIOBase):
             )
             # Return the size to satisfy encoder interface, but don't store the frame
             return frame_size
-        
+
         with self.condition:
             self.frame = buf
             monotonic_now = time.monotonic()
             self._stats.record_frame(monotonic_now)
             self.condition.notify_all()
         return frame_size
-    
+
     def get_dropped_frames(self) -> int:
         """Return the number of dropped frames due to size limits."""
         return self._dropped_frames
@@ -556,7 +556,7 @@ def gen() -> Iterator[bytes]:
             if shutdown_event.is_set():
                 logger.info("Shutdown event set; ending MJPEG stream.")
                 break
-            
+
             if not recording_started.is_set():
                 logger.info("Recording not started; ending MJPEG stream.")
                 break
