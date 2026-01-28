@@ -84,6 +84,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.3] - 2026-01-28
+
+- Add python3-numpy to Dockerfile for compatibility with simplejpeg and picamera2
+
 ## [1.10.2] - 2026-01-28
 
 - Add NumPy dependency for array processing in requirements.txt
