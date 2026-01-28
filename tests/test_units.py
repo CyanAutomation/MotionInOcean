@@ -53,7 +53,7 @@ def test_dockerfile_has_flask(workspace_root):
     dockerfile_content = dockerfile_path.read_text().lower()
     requirements_content = requirements_path.read_text().lower()
 
-    has_pip_install = "pip3 install" in dockerfile_content and "flask" in dockerfile_content
+    has_pip_install = "pip3 install" in dockerfile_content and "flask" in dockerfile_content.split("pip3 install", 1)[-1].split("\n")[0]
     has_requirements = "flask" in requirements_content
 
     assert has_pip_install or has_requirements, (
