@@ -19,6 +19,7 @@ services:
       - JPEG_QUALITY=${MOTION_IN_OCEAN_JPEG_QUALITY}
       - CORS_ORIGINS=${MOTION_IN_OCEAN_CORS_ORIGINS}
       - MOCK_CAMERA=${MOCK_CAMERA:-false}
+      - HEALTHCHECK_READY=${MOTION_IN_OCEAN_HEALTHCHECK_READY:-false}
     volumes:
       - /run/udev:/run/udev:ro
 

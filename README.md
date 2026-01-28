@@ -244,7 +244,11 @@ The container exposes two endpoints:
 * `/ready` - Readiness (returns 200 only if camera is initialised and streaming)
 
 The docker-compose healthcheck uses the bundled `healthcheck.py`, which defaults to `/health`.
-Override it with:
+Switch to readiness checks with:
+
+* `HEALTHCHECK_READY=true` (uses `/ready` instead of `/health`)
+
+Override the full URL (takes precedence over `HEALTHCHECK_READY`) with:
 
 * `HEALTHCHECK_URL` (e.g., `http://127.0.0.1:8000/ready`)
 * `HEALTHCHECK_TIMEOUT` (seconds, default `5`)

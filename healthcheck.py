@@ -5,6 +5,7 @@ Checks if the Flask application is responding on port 8000.
 
 Optional environment variables:
   - HEALTHCHECK_URL (default: http://127.0.0.1:8000/health)
+  - HEALTHCHECK_READY (default: false; if true, uses /ready instead of /health)
   - HEALTHCHECK_TIMEOUT (default: 5 seconds)
 """
 
@@ -16,7 +17,8 @@ import urllib.request
 from urllib.parse import urlparse
 
 
-DEFAULT_HEALTHCHECK_URL = "http://127.0.0.1:8000/health"
+DEFAULT_HEALTHCHECK_HOST = "http://127.0.0.1:8000"
+DEFAULT_HEALTHCHECK_PATH = "/health"
 DEFAULT_HEALTHCHECK_TIMEOUT = 5
 
 
@@ -38,7 +40,16 @@ def _is_public_address(address):
 def check_health():
     """Check if the application is healthy."""
     env_healthcheck_url = os.getenv("HEALTHCHECK_URL")
-    healthcheck_url = env_healthcheck_url or DEFAULT_HEALTHCHECK_URL
+    healthcheck_ready = os.getenv("HEALTHCHECK_READY", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    healthcheck_path = "/ready" if healthcheck_ready else DEFAULT_HEALTHCHECK_PATH
+    healthcheck_url = (
+        env_healthcheck_url or f"{DEFAULT_HEALTHCHECK_HOST}{healthcheck_path}"
+    )
     if env_healthcheck_url:
         parsed_url = urlparse(env_healthcheck_url)
         hostname = parsed_url.hostname
@@ -70,7 +81,7 @@ def check_health():
                 f"Warning: Invalid HEALTHCHECK_URL '{env_healthcheck_url}', using default",
                 file=sys.stderr,
             )
-            healthcheck_url = DEFAULT_HEALTHCHECK_URL
+            healthcheck_url = f"{DEFAULT_HEALTHCHECK_HOST}{healthcheck_path}"
     try:
         timeout_seconds = float(
             os.getenv("HEALTHCHECK_TIMEOUT") or DEFAULT_HEALTHCHECK_TIMEOUT
