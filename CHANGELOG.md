@@ -84,6 +84,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.1] - 2026-01-28
+
+- Merge pull request #96 from CyanAutomation/codex/github-mention-add-healthcheck_ready-toggle-for-healthcheck
+- Clarify healthcheck fallback URL
+- Merge pull request #95 from CyanAutomation/codex/add-environment-variable-for-health-check
+- Merge pull request #94 from CyanAutomation/codex/update-streamstats-to-use-time.monotonic
+- Add readiness toggle for healthcheck
+- Use monotonic time for stream stats
+- Merge pull request #93 from CyanAutomation/codex/add-device-mappings-to-motion-in-ocean-service
+- Update docker-compose.yml
+- Merge pull request #90 from CyanAutomation/codex/refactor-test_healthcheck_url_validation
+- Merge pull request #92 from CyanAutomation/codex/github-mention-reflect-camera-inactive/stale-state-in-conne
+- Add explicit camera device mappings
+- Merge pull request #91 from CyanAutomation/codex/update-test_dockerfile_has_flask-validation
+- Update tests/test_units.py
+- Fix connected state for stale streams
+- Update Flask dependency test
+- Fix healthcheck test setup
+- Merge pull request #89 from CyanAutomation/codex/update-rendermetrics-connection-status
+- Update pi_camera_in_docker/static/css/style.css
+- Update pi_camera_in_docker/static/js/app.js
+- Update camera status for stale streams
+- Merge pull request #88 from CyanAutomation/codex/replace-hardcoded-jpeg-with-generated-jpeg-9kcq95
+- Add Pillow fallback for mock camera JPEGs
+- Merge pull request #87 from CyanAutomation/codex/update-fetchmetrics-to-use-abortcontroller-3wu4zf
+- Handle metrics timeouts with abort
+- Merge pull request #86 from CyanAutomation/codex/refactor-check_health-to-improve-hostname-validation
+- Update tests/test_units.py
+- Merge pull request #85 from CyanAutomation/codex/update-cors-variable-handling-in-app
+- Fix healthcheck hostname validation
+- Update CORS env handling
+- Merge pull request #84 from CyanAutomation/codex/add-max_frame_age_seconds-to-metrics-response
+- Add max frame age to metrics
+- Merge pull request #83 from CyanAutomation/codex/refactor-updatestats-to-handle-errors
+- Update pi_camera_in_docker/static/js/app.js
+- Update pi_camera_in_docker/static/js/app.js
+- Update pi_camera_in_docker/static/js/app.js
+- Merge pull request #82 from CyanAutomation/codex/refactor-pi_camera_in_docker-mock-behavior
+- Merge pull request #81 from CyanAutomation/codex/refactor-readiness-response-construction
+- Simplify stats error handling
+- Gate pykms mock behind env flag
+- Refactor readiness response
+
 ## [1.0.9] - 2026-01-26
 
 - Merge pull request #80 from CyanAutomation/codex/refactor-check_health-for-timeout-parsing
