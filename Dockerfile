@@ -17,6 +17,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3 \
         python3-pip \
         python3-dev \
+        python3-numpy \
         gnupg \
         curl \
         ca-certificates \
@@ -43,8 +44,9 @@ COPY requirements.txt /app/
 # Using BuildKit cache mount to speed up pip installs
 # Install base requirements, then conditionally install opencv
 # Using --break-system-packages flag required for pip on Debian 12+
+# Exclude numpy from pip installation (using python3-numpy from apt for binary compatibility with simplejpeg)
 RUN --mount=type=cache,target=/root/.cache/pip \
-    grep -v "opencv-python-headless" requirements.txt > /tmp/requirements-base.txt && \
+    grep -v "opencv-python-headless" requirements.txt | grep -v "numpy" > /tmp/requirements-base.txt && \
     pip3 install --break-system-packages -r /tmp/requirements-base.txt && \
     if [ "$INCLUDE_OPENCV" = "true" ]; then \
         echo "Installing opencv-python-headless for edge detection support..." && \
@@ -58,12 +60,13 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # python3-picamera2 is available in the same Python environment used by the application
 FROM debian:bookworm-slim
 
-# Install Python runtime
+# Install Python runtime and numpy (for binary compatibility with simplejpeg/picamera2)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        python3
+        python3 \
+        python3-numpy
 
 # Copy Raspberry Pi repository and keys from builder
 COPY --from=builder /usr/share/keyrings/raspberrypi.gpg /usr/share/keyrings/raspberrypi.gpg
@@ -97,7 +100,7 @@ COPY healthcheck.py /app/healthcheck.py
 RUN chmod +x /app/healthcheck.py
 
 # Validate required Python modules are present in the final image
-RUN python3 -c "import sys; import flask; import flask_cors; import picamera2; print('All required modules imported successfully')"
+RUN python3 -c "import sys; import numpy; import flask; import flask_cors; import picamera2; print('All required modules imported successfully')"
 
 # Set the entry point
 CMD ["python3", "/app/main.py"]
